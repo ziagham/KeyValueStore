@@ -1,1 +1,1 @@
-# MegaKV
+# In Memory Key-Value Store
