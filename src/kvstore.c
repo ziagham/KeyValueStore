@@ -7,26 +7,21 @@
 
 // Alphabet size (# of symbols)
 #define ALPHABET_SIZE (26)
-#define CHAR_TO_INDEX(c) ((int)c - (int)'a')
 #define ARRAY_SIZE(a) sizeof(a)/sizeof(a[0])
-#define encode(x, c)      \
-	if (c >= 'a')         \
-		x = c - 'a' + 26; \
-	else                  \
-		x = c - 'A';
 
-struct Slice
-{
-	uint8_t size;
-	char *data;
-};
+// struct Slice
+// {
+// 	uint8_t size;
+// 	char *data;
+// };
 
 struct TrieNode
 { 
 	struct TrieNode* children[ALPHABET_SIZE];
 	//long long int descendants;
 	bool isEndOfWord;
-	struct Slice* value;
+	// struct Slice* value;
+	char* value;
 	//struct Slice word;
 	int no_of_ends;
 };
@@ -70,14 +65,15 @@ int get_index(char ch)
 
 // If not present, inserts key into trie
 // If the key is prefix of trie node, just marks leaf node
-bool insert(struct TrieNode *root, struct Slice key, struct Slice value)
+bool insert(struct TrieNode *root, char* key, char* value)
 {
 	bool isThere=true; 
     struct TrieNode *curNode = root;
-	
-	for (int i = 0; i < key.size; i++)
+	int length = strlen(key);
+
+	for (int i = 0; i < length; i++)
 	{
-		int index = get_index(key.data[i]);
+		int index = get_index(key[i]);
 
 		if (!curNode->children[index])
 		{ 
@@ -91,17 +87,17 @@ bool insert(struct TrieNode *root, struct Slice key, struct Slice value)
 	}
 
 	bool isEnd=curNode->isEndOfWord; 
-	struct Slice *val;
-	val=(struct Slice *)malloc(sizeof(struct Slice));
-	val->size=value.size;
-	val->data=value.data; 
+	// struct Slice *val;
+	// val=(struct Slice *)malloc(sizeof(struct Slice));
+	// val->size=value.size;
+	// val->data=value.data; 
 	// pthread_mutex_lock(&curNode->lock); 
 	curNode->isEndOfWord = true;
-	curNode->value=val;
+	curNode->value=value;
 
 	if(isEnd)
 	{
-		for (int i = key.size-1; i>=0; i--) 
+		for (int i = length-1; i>=0; i--) 
 		{ 
 			curNode->no_of_ends-=1; 
 			curNode = curNode->children[52];
@@ -112,14 +108,15 @@ bool insert(struct TrieNode *root, struct Slice key, struct Slice value)
 	return isThere && isEnd;
 }
 
-bool search(struct TrieNode *root, struct Slice* key, struct Slice* value)
+bool search(struct TrieNode *root, char* key, char** value)
 {
     struct TrieNode *curNode = root;
+	int length = strlen(key);
 
-	for (int i = 0; i<key.size; i++) 
+	for (int i = 0; i<length; i++) 
 	{ 
 		// int index = get_index(key.data[i]); 
-		int index = get_index(key.data[i]);
+		int index = get_index(key[i]);
 
 		if (!curNode->children[index]) 
 		{
@@ -130,52 +127,31 @@ bool search(struct TrieNode *root, struct Slice* key, struct Slice* value)
 	}
 	// return curNode->value;
 	if(curNode->value!=NULL)
-		value=*curNode->value;
+		*value=curNode->value;
 	// pthread_mutex_unlock(&m_lock);
 	return (curNode != NULL && curNode->isEndOfWord); 
 }
 
 int main() {
-	struct Slice* a,b,c,d,e,f,test,test1;
-
+	//char* a,b,c,d,e,f,test,test1;
+	char* test;
 	struct TrieNode* root = create_node();
+	char keys[][8] = {"the", "a", "there", "answer", "any", "by", "bye", "their"};
+	char values[][8] = {"amin", "amin2", "amin3", "amin4", "amin5", "amin6", "amin7", "amin8"};
+	char output[][32] = {"Not present in trie", "Present in trie"};
 
-	a=(struct Slice *)malloc(sizeof(struct Slice));
-    b=(struct Slice *)malloc(sizeof(struct Slice));
-    c=(struct Slice *)malloc(sizeof(struct Slice));
-    d=(struct Slice *)malloc(sizeof(struct Slice));
-    e=(struct Slice *)malloc(sizeof(struct Slice));
-    f=(struct Slice *)malloc(sizeof(struct Slice));
-    test=(struct Slice *)malloc(sizeof(struct Slice));
-    test1=(struct Slice *)malloc(sizeof(struct Slice));
+	int i;
+    for (i = 0; i < ARRAY_SIZE(keys); i++)
+        insert(root, keys[i], values[i]);
 
-	a.data=(char *)"hi";
-    a.size=2;
-	insert(root, a);
+	printf("%s --- %s\n", "the", output[search(root, "the", &test)]);
+    printf("%s --- %s\n", "these", output[search(root, "these", &test)]);
+    printf("%s --- %s\n", "their", output[search(root, "their", &test)]);
+    printf("%s --- %s\n", "thaw", output[search(root, "thaw", &test)]);
 
-    b.data=(char *)"hello";
-    b.size=5;
-	insert(root, b);
-
-    c.data=(char *)"welcome";
-    c.size=7;
-	insert(root, c);
-
-    d.data=(char *)"adab";
-    d.size=4;
-	insert(root, d);
-
-    e.data=(char *)"namaste";
-    e.size=7;
-	insert(root, e);
-
-    f.data=(char *)"vanakkam";
-    f.size=8;
-	insert(root, f);
-
-	bool result = search(head, a, &test);
-	if (result)
-		printf("Found!\nThe value:%s", test.data);
-	else
-		printf("Not Found\n");
+	// bool result = search(root, "hi", &test);
+	// if (result)
+	// 	printf("Found!\nThe value:%s\n", test);
+	// else
+	// 	printf("Not Found\n");
 }

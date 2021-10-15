@@ -1,6 +1,13 @@
 {
     "files.associations": {
         "pthread.h": "c",
-        "unistd.h": "c"
+        "unistd.h": "c",
+        "random": "c",
+        "bitset": "c",
+        "array": "c",
+        "string_view": "c",
+        "initializer_list": "c",
+        "regex": "c",
+        "utility": "c"
     }
 }
