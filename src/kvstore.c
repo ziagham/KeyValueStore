@@ -9,20 +9,26 @@
 #define ALPHABET_SIZE (26)
 #define CHAR_TO_INDEX(c) ((int)c - (int)'a')
 #define ARRAY_SIZE(a) sizeof(a)/sizeof(a[0])
+#define encode(x, c)      \
+	if (c >= 'a')         \
+		x = c - 'a' + 26; \
+	else                  \
+		x = c - 'A';
 
-// struct Slice
-// {
-// 	uint8_t size;
-// 	char *data;
-// };
+struct Slice
+{
+	uint8_t size;
+	char *data;
+};
 
 struct TrieNode
 { 
 	struct TrieNode* children[ALPHABET_SIZE];
 	//long long int descendants;
 	bool isEndOfWord;
-	//char* value;
+	struct Slice* value;
 	//struct Slice word;
+	int no_of_ends;
 };
 
 // Function that returns a new Trie node
@@ -31,19 +37,14 @@ struct TrieNode* create_node(void)
 	struct TrieNode* pNode = NULL;
  
     pNode = (struct TrieNode *)malloc(sizeof(struct TrieNode));
- 
-    if (pNode)
-    {
-        int i;
- 
-        pNode->isEndOfWord = false;
-		//pNode->value = value;
+	
+	pNode->isEndOfWord = false; 
+	pNode->no_of_ends=0;
 
-        for (i = 0; i < ALPHABET_SIZE; i++)
-            pNode->children[i] = NULL;
-    }
- 
-    return pNode;
+	for (int i = 0; i < ALPHABET_SIZE; i++) 
+		pNode->children[i] = NULL; 
+
+	return pNode; 
 }
 
 void free_node(struct TrieNode* node) {
@@ -59,69 +60,122 @@ void free_node(struct TrieNode* node) {
     free(node);
 }
 
-// If not present, inserts key into trie
-// If the key is prefix of trie node, just marks leaf node
-void insert(struct TrieNode *root, const char *key)
+int get_index(char ch)
 {
-    int level;
-    int length = strlen(key);
-    int index;
- 
-    struct TrieNode *pCrawl = root;
- 
-    for (level = 0; level < length; level++)
-    {
-        index = CHAR_TO_INDEX(key[level]);
-        if (!pCrawl->children[index])
-            pCrawl->children[index] = create_node();
- 
-        pCrawl = pCrawl->children[index];
-    }
- 
-    // mark last node as leaf
-    pCrawl->isEndOfWord = true;
+	// if(ch>='a')
+	//     return ch-71;
+	// return ch-65;
+	return ch-65 - (6 & -(ch>='a'));
 }
 
-bool search(struct TrieNode *root, const char *key)
+// If not present, inserts key into trie
+// If the key is prefix of trie node, just marks leaf node
+bool insert(struct TrieNode *root, struct Slice key, struct Slice value)
 {
-    int level;
-    int length = strlen(key);
-    int index;
-    struct TrieNode *pCrawl = root;
- 
-    for (level = 0; level < length; level++)
-    {
-        index = CHAR_TO_INDEX(key[level]);
- 
-        if (!pCrawl->children[index])
-            return false;
- 
-        pCrawl = pCrawl->children[index];
-    }
- 
-    return (pCrawl->isEndOfWord);
+	bool isThere=true; 
+    struct TrieNode *curNode = root;
+	
+	for (int i = 0; i < key.size; i++)
+	{
+		int index = get_index(key.data[i]);
+
+		if (!curNode->children[index])
+		{ 
+			curNode->children[index] = create_node();
+			curNode->children[index]->children[52] = curNode; 
+			isThere=false;
+		}
+		// pthread_mutex_lock(&curNode->children[index]->lock); 
+		curNode->children[index]->no_of_ends+=1;
+		curNode = curNode->children[index];
+	}
+
+	bool isEnd=curNode->isEndOfWord; 
+	struct Slice *val;
+	val=(struct Slice *)malloc(sizeof(struct Slice));
+	val->size=value.size;
+	val->data=value.data; 
+	// pthread_mutex_lock(&curNode->lock); 
+	curNode->isEndOfWord = true;
+	curNode->value=val;
+
+	if(isEnd)
+	{
+		for (int i = key.size-1; i>=0; i--) 
+		{ 
+			curNode->no_of_ends-=1; 
+			curNode = curNode->children[52];
+
+		} 
+	}
+	// pthread_mutex_unlock(&m_lock);
+	return isThere && isEnd;
+}
+
+bool search(struct TrieNode *root, struct Slice* key, struct Slice* value)
+{
+    struct TrieNode *curNode = root;
+
+	for (int i = 0; i<key.size; i++) 
+	{ 
+		// int index = get_index(key.data[i]); 
+		int index = get_index(key.data[i]);
+
+		if (!curNode->children[index]) 
+		{
+			// pthread_mutex_unlock(&m_lock);
+			return false; 
+		}
+		curNode = curNode->children[index]; 
+	}
+	// return curNode->value;
+	if(curNode->value!=NULL)
+		value=*curNode->value;
+	// pthread_mutex_unlock(&m_lock);
+	return (curNode != NULL && curNode->isEndOfWord); 
 }
 
 int main() {
-	// Input keys (use only 'a' through 'z' and lower case)
-    char keys[][8] = {"the", "a", "there", "answer", "any",
-                     "by", "bye", "their"};
- 
-    char output[][32] = {"Not present in trie", "Present in trie"};
- 
- 
-    struct TrieNode *root = create_node();
- 
-    // Construct trie
-    int i;
-    for (i = 0; i < ARRAY_SIZE(keys); i++)
-        insert(root, keys[i]);
- 
-    // Search for different keys
-    printf("%s --- %s\n", "the", output[search(root, "the")] );
-    printf("%s --- %s\n", "these", output[search(root, "these")] );
-    printf("%s --- %s\n", "their", output[search(root, "their")] );
-    printf("%s --- %s\n", "thaw", output[search(root, "thaw")] );
- 
-    return 0;
+	struct Slice* a,b,c,d,e,f,test,test1;
+
+	struct TrieNode* root = create_node();
+
+	a=(struct Slice *)malloc(sizeof(struct Slice));
+    b=(struct Slice *)malloc(sizeof(struct Slice));
+    c=(struct Slice *)malloc(sizeof(struct Slice));
+    d=(struct Slice *)malloc(sizeof(struct Slice));
+    e=(struct Slice *)malloc(sizeof(struct Slice));
+    f=(struct Slice *)malloc(sizeof(struct Slice));
+    test=(struct Slice *)malloc(sizeof(struct Slice));
+    test1=(struct Slice *)malloc(sizeof(struct Slice));
+
+	a.data=(char *)"hi";
+    a.size=2;
+	insert(root, a);
+
+    b.data=(char *)"hello";
+    b.size=5;
+	insert(root, b);
+
+    c.data=(char *)"welcome";
+    c.size=7;
+	insert(root, c);
+
+    d.data=(char *)"adab";
+    d.size=4;
+	insert(root, d);
+
+    e.data=(char *)"namaste";
+    e.size=7;
+	insert(root, e);
+
+    f.data=(char *)"vanakkam";
+    f.size=8;
+	insert(root, f);
+
+	bool result = search(head, a, &test);
+	if (result)
+		printf("Found!\nThe value:%s", test.data);
+	else
+		printf("Not Found\n");
 }
