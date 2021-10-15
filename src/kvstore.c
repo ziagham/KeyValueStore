@@ -6,27 +6,18 @@
 #include <pthread.h>
 
 // Alphabet size (# of symbols)
-#define ALPHABET_SIZE (26)
+#define ALPHABET_SIZE (52)
 #define ARRAY_SIZE(a) sizeof(a)/sizeof(a[0])
-
-// struct Slice
-// {
-// 	uint8_t size;
-// 	char *data;
-// };
 
 struct TrieNode
 { 
 	struct TrieNode* children[ALPHABET_SIZE];
-	//long long int descendants;
-	bool isEndOfWord;
-	// struct Slice* value;
+	bool isEndOfWord; // isEndOfWord is true if the node represents end of a word 
 	char* value;
-	//struct Slice word;
 	int no_of_ends;
 };
 
-// Function that returns a new Trie node
+// Returns new trie node (initialized to NULLs) 
 struct TrieNode* create_node(void)
 {
 	struct TrieNode* pNode = NULL;
@@ -57,9 +48,6 @@ void free_node(struct TrieNode* node) {
 
 int get_index(char ch)
 {
-	// if(ch>='a')
-	//     return ch-71;
-	// return ch-65;
 	return ch-65 - (6 & -(ch>='a'));
 }
 
@@ -108,7 +96,7 @@ bool insert(struct TrieNode *root, char* key, char* value)
 	return isThere && isEnd;
 }
 
-bool search(struct TrieNode *root, char* key, char** value)
+bool search(struct TrieNode* root, char* key, char** value)
 {
     struct TrieNode *curNode = root;
 	int length = strlen(key);
@@ -132,8 +120,52 @@ bool search(struct TrieNode *root, char* key, char** value)
 	return (curNode != NULL && curNode->isEndOfWord); 
 }
 
+// bool delete(struct TrieNode* root, char* key)
+// {
+// 	struct TrieNode* curNode = root;
+// 	int length = strlen(key);
+
+// 	for (int i = 0; i<length-1; i++) 
+// 	{ 
+// 		int index = get_index(key[i]);
+
+// 		if (!curNode->children[index]) 
+// 		{
+// 			return false; 
+// 		}
+// 		curNode = curNode->children[index]; 
+// 	}
+
+// 	int i = length-1;
+// 	int index = get_index(key[i]);
+
+// 	if(curNode->children[index]==NULL)
+// 	{
+// 		return false;
+// 	}
+// 	struct TrieNode* temp = curNode;
+// 	temp = temp->children[index];
+// 	for (int i = length-1; i>=0; i--) 
+// 	{
+// 		temp->no_of_ends-=1;
+// 		temp = temp->children[52];
+// 	}
+
+// 	if(curNode->children[index]->no_of_ends==0 && curNode->children[index]->isEndOfWord)
+// 	{
+	
+// 		free(curNode->children[index]);
+// 		curNode->children[index] = NULL;
+// 	}
+// 	else
+// 	{
+// 		curNode->children[index]->value=NULL;
+// 		curNode->children[index]->isEndOfWord=false;
+// 	}
+// 	return true;
+// }
+
 int main() {
-	//char* a,b,c,d,e,f,test,test1;
 	char* test;
 	struct TrieNode* root = create_node();
 	char keys[][8] = {"the", "a", "there", "answer", "any", "by", "bye", "their"};
@@ -147,11 +179,9 @@ int main() {
 	printf("%s --- %s\n", "the", output[search(root, "the", &test)]);
     printf("%s --- %s\n", "these", output[search(root, "these", &test)]);
     printf("%s --- %s\n", "their", output[search(root, "their", &test)]);
-    printf("%s --- %s\n", "thaw", output[search(root, "thaw", &test)]);
+    printf("%s --- %s\n", "answer", output[search(root, "answer", &test)]);
 
-	// bool result = search(root, "hi", &test);
-	// if (result)
-	// 	printf("Found!\nThe value:%s\n", test);
-	// else
-	// 	printf("Not Found\n");
+	// delete(root, "answer");
+
+    // printf("%s --- %s\n", "answer", output[search(root, "answer", &test)]);
 }
