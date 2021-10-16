@@ -138,7 +138,7 @@ bool del(struct TrieNode* root, char* key)
 int main() {
 	char* test;
 	struct TrieNode* root = create_node();
-	char keys[][8] = {"the", "a", "there", "answer", "any", "by", "bye", "their"};
+	char keys[][8] = {"art", "artist", "cuck", "cunny", "dog", "zoo", "zoom", "zone"};
 	char values[][8] = {"amin", "amin2", "amin3", "amin4", "amin5", "amin6", "amin7", "amin8"};
 	char output[][32] = {"Not present in trie", "Present in trie"};
 
@@ -146,12 +146,16 @@ int main() {
     for (i = 0; i < ARRAY_SIZE(keys); i++)
         insert(root, keys[i], values[i]);
 
-	printf("%s --- %s\n", "the", output[lookup(root, "the", &test)]);
-    printf("%s --- %s\n", "these", output[lookup(root, "these", &test)]);
-    printf("%s --- %s\n", "their", output[lookup(root, "their", &test)]);
-    printf("%s --- %s\n", "answer", output[lookup(root, "answer", &test)]);
+	printf("%s --- %s\n", "art", output[lookup(root, "art", &test)]);
+    printf("%s --- %s\n", "cuck", output[lookup(root, "cuck", &test)]);
+    printf("%s --- %s\n", "dog", output[lookup(root, "dog", &test)]);
+    printf("%s --- %s\n", "zoom", output[lookup(root, "zoom", &test)]);
 
-	del(root, "answer");
+	del(root, "art");
+	del(root, "zoom");
 
-    printf("%s --- %s\n", "answer", output[lookup(root, "answer", &test)]);
+    printf("%s --- %s\n", "art", output[lookup(root, "art", &test)]);
+    printf("%s --- %s\n", "zoom", output[lookup(root, "zoom", &test)]);
+    printf("%s --- %s\n", "artist", output[lookup(root, "artist", &test)]);
+    printf("%s --- %s\n", "zoo", output[lookup(root, "zoo", &test)]);
 }
