@@ -1,19 +1,48 @@
-#include <pthread.h>
+//
+// @file    : dummy-keystore.h
+// @purpose : A header file for a dummy key-value engine
+// @author  : Prof. Phuong Hoai Ha & Ibrahim Umar & Koen van Greevenbroek & Hung Ngoc Phan
+// @project : [INF-3210 Green Computing] Coursework Assignment
+// @licensed: Copyright (C) 2021 Green Computing Group. Subject to the GNU General Public License 3.0
+// @created : someday in 2016
+// @modified: 23/08/2021
+//
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-#define ALPHABET_SIZE (53)
-#define ARRAY_SIZE(a) sizeof(a)/sizeof(a[0])
+#ifndef __DUMMY_KEYSTORE_H__
+#define __DUMMY_KEYSTORE_H__
 
-pthread_mutex_t m_lock;
+// You may need to include your custom data structure (e.g., Tree, Map, Hash) at here.
+// For example, I implemented a custom B-tree, 'my-tree.h' in the 'KV-engine/' directory.
+// I need to include my custom data structure as
+// #include "my-tree.h"                 
 
-struct TrieNode
-{ 
-	struct TrieNode* children[ALPHABET_SIZE];
-	bool isEndOfWord;
-	char* value;
-	int no_of_ends;
-};
+// Define a macro to use 'db_t' as a primary keyword for data engine
+// You may need to overwrite this definition by replacing your data structure.
+// For example: If we have a custom data-structure named 'Key_Value_Tree' in 'my-tree.h', then we define as
+//      #define db_t Key_Value_Tree
+#define db_t int
 
-int get_index(char ch)
-{
-	return ch-65 - (6 & -(ch>='a'));
-}
+//
+// @brief: Intialize new database - An adapter function
+//
+db_t *db_new();
+
+//
+// @brief: Put a (key,value) into database - An adapter function
+//
+int db_put(db_t *db_data, char *key, char *val);
+
+//
+// @brief: Get a corresponding 'value' of 'key' from database - An adapter function
+//
+char* db_get(db_t *db_data, char *key);
+
+//
+// @brief: Destroy database and Free memory - An adapter function
+//
+int db_free(db_t *db_data);
+
+#endif
