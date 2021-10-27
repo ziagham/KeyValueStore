@@ -11,8 +11,11 @@
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
+#include <stdbool.h>
+
 #ifndef __DUMMY_KEYSTORE_H__
 #define __DUMMY_KEYSTORE_H__
+#define ALPHABET_SIZE (53)
 
 // You may need to include your custom data structure (e.g., Tree, Map, Hash) at here.
 // For example, I implemented a custom B-tree, 'my-tree.h' in the 'KV-engine/' directory.
@@ -23,7 +26,16 @@
 // You may need to overwrite this definition by replacing your data structure.
 // For example: If we have a custom data-structure named 'Key_Value_Tree' in 'my-tree.h', then we define as
 //      #define db_t Key_Value_Tree
-#define db_t int
+
+struct TrieNode
+{ 
+	struct TrieNode *children[ALPHABET_SIZE];
+	bool isEndOfWord;
+	char* value;
+	int no_of_ends;
+};
+
+#define db_t struct TrieNode
 
 //
 // @brief: Intialize new database - An adapter function
@@ -33,7 +45,7 @@ db_t *db_new();
 //
 // @brief: Put a (key,value) into database - An adapter function
 //
-int db_put(db_t *db_data, char *key, char *val);
+bool db_put(db_t *db_data, char *key, char *val);
 
 //
 // @brief: Get a corresponding 'value' of 'key' from database - An adapter function

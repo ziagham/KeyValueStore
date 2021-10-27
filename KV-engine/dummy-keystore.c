@@ -15,7 +15,8 @@
 #include <signal.h>
 #include <pthread.h>
 #include <unistd.h>
-#include <time.h>             
+#include <time.h>
+#include <string.h>
 #include <sys/time.h>
 
 #define HB_ENERGY_IMPL                  // Use heartbeat energy impl.
@@ -36,7 +37,7 @@ heartbeat_t* heart;                     // A parameter 'heart' in heartbeat sett
 poet_state* state;                      // System control states and CPU configurations
 static poet_control_state_t* control_states;
 static poet_cpu_state_t* cpu_states;
-
+pthread_mutex_t m_lock;
 
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -175,6 +176,11 @@ pthread_t hb_thread_handler;        // A global thread to run heartbeat_timer_th
 time_t time_start, time_end;        // Mark the start-time and end-time of benchmark
 int op_count = 0;                   // Counter of queries
 
+int get_index(char ch)
+{
+	return ch-65 - (6 & -(ch>='a'));
+}
+
 //
 // @brief: Intialize new database - An adapter function
 //
@@ -201,7 +207,13 @@ db_t *db_new() {
     // [Custom-as-yourself] Initialize a database
     //////////////////////////////////////////////////////////
 
-    db_t* database = (db_t*) malloc(sizeof(int));
+    db_t* database = (db_t*) malloc(sizeof(db_t));
+
+    database->isEndOfWord = false; 
+	database->no_of_ends=0;
+
+	for (int i = 0; i < 52; i++) 
+		database->children[i] = NULL; 
 
     return database;
 }
@@ -209,7 +221,7 @@ db_t *db_new() {
 //
 // @brief: Put a (key,value) into database - An adapter function
 //
-int db_put(db_t *db_data, char *key, char *val) {
+bool db_put(db_t *db_data, char *key, char *val) {
 
     // Update the counter of queries
     op_count++;
@@ -221,7 +233,40 @@ int db_put(db_t *db_data, char *key, char *val) {
     // Call function in your data-structure 
     // to insert a ('key','value') into your database 'db_data'
 
-    return 0;
+    pthread_mutex_lock(&m_lock);
+	bool isThere=true; 
+    db_t *curNode = db_data;
+	int length = strlen(key);
+
+	for (int i = 0; i < length; i++)
+	{
+		int index = get_index(key[i]);
+
+		if (!curNode->children[index])
+		{ 
+			curNode->children[index] = db_new();
+			curNode->children[index]->children[52] = curNode; 
+			isThere=false;
+		}
+		curNode->children[index]->no_of_ends+=1;
+		curNode = curNode->children[index];
+	}
+
+	bool isEnd=curNode->isEndOfWord; 
+	curNode->isEndOfWord = true;
+	curNode->value=val;
+
+	if(isEnd)
+	{
+		for (int i = length-1; i>=0; i--) 
+		{ 
+			curNode->no_of_ends-=1; 
+			curNode = curNode->children[52];
+
+		} 
+	}
+	pthread_mutex_unlock(&m_lock);
+	return isThere && isEnd;
 }
 
 //
@@ -240,9 +285,25 @@ char* db_get(db_t *db_data, char *key) {
     // to get a corresponding value of a 'key' from your database 'db_data'
     
     // Store the found value of 'key' in char* and return it
-    char* query_result = "This is the value of the given key, which is found from db_data";
+    //* query_result;
 
-    return query_result;
+    db_t *curNode = db_data;
+	int length = strlen(key);
+
+	for (int i = 0; i<length; i++) 
+	{
+		int index = get_index(key[i]);
+
+		if (!curNode->children[index]) 
+			return (char*)"";
+
+		curNode = curNode->children[index]; 
+	}
+
+	if(curNode->value!=NULL)
+		return curNode->value;
+        
+	return (char*)"";
 }
 
 //
