@@ -17,8 +17,8 @@
 //
 // @brief: The size of key, value in bytes
 //
-#define NKEY 16
-#define NVAL 32
+#define NKEY 64
+#define NVAL 256
 
 //
 // @brief: A dictionary of query types

@@ -15,7 +15,7 @@
 
 #ifndef __DUMMY_KEYSTORE_H__
 #define __DUMMY_KEYSTORE_H__
-#define ALPHABET_SIZE (53)
+#define ALPHABET_SIZE (56)
 
 // You may need to include your custom data structure (e.g., Tree, Map, Hash) at here.
 // For example, I implemented a custom B-tree, 'my-tree.h' in the 'KV-engine/' directory.
