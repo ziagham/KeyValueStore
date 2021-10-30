@@ -209,13 +209,19 @@ db_t *db_new() {
 
     db_t* database = (db_t*) malloc(sizeof(db_t));
 
-    database->isEndOfWord = false; 
-	database->no_of_ends=0;
+    return database;
+}
+
+db_t *new_node() {
+    db_t* pNode = (db_t*) malloc(sizeof(db_t));
+
+    pNode->isEndOfWord = false; 
+	pNode->no_of_ends=0;
 
 	for (int i = 0; i < 52; i++) 
-		database->children[i] = NULL; 
+		pNode->children[i] = NULL; 
 
-    return database;
+	return pNode; 
 }
 
 //
@@ -243,9 +249,9 @@ bool db_put(db_t *db_data, char *key, char *val) {
 		int index = get_index(key[i]);
 
 		if (!curNode->children[index])
-		{ 
-			curNode->children[index] = db_new();
-			curNode->children[index]->children[52] = curNode; 
+		{
+			curNode->children[index] = new_node();
+			curNode->children[index]->children[52] = curNode;
 			isThere=false;
 		}
 		curNode->children[index]->no_of_ends+=1;
