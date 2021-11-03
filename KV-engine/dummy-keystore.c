@@ -239,11 +239,13 @@ bool db_put(db_t *db_data, char *key, char *val) {
     // Update the counter of queries
     op_count++;
 
-    int length = strlen(key);
-    for (int i = 0; i < length; i++)
-	{
-        printf("key -> %s \n", key);
-    }
+    //int length = strlen(key);
+    //printf("key: %s \n", key);
+
+    // for (int i = 0; i < length; i++)
+	// {
+    //     printf("key -> %s \n", key);
+    // }
 
     //////////////////////////////////////////////////////////
     // [Custom-as-yourself] Insert (key,value) into database
@@ -254,43 +256,43 @@ bool db_put(db_t *db_data, char *key, char *val) {
 
     // printf("op_count %d \n", op_count);
     
-    // pthread_mutex_lock(&m_lock);
-    // bool isThere=true;
-    // db_t *curNode = db_data;
-    // int length = strlen(key);
+    pthread_mutex_lock(&m_lock);
+    bool isThere=true;
+    db_t *curNode = db_data;
+    int length = strlen(key);
 
-	// for (int i = 0; i < length; i++)
-	// {
-    //     printf("key %s \n", key);
-	// 	int index = get_index(key[i]);
-    //     printf("index %d %d \n", index, i);
+    printf("key %s \n", key);
 
-	// 	if (!curNode->children[index])
-	// 	{
-	// 		curNode->children[index] = new_node();
-	// 		curNode->children[index]->children[52] = curNode;
-	// 		isThere=false;
-	// 	}
-	// 	curNode->children[index]->no_of_ends+=1;
-	// 	curNode = curNode->children[index];
-	// }
+	for (int i = 0; i < length; i++)
+	{
+		int index = get_index(key[i]);
+        printf("PUT index %d %c \n", index, key[i]);
 
-	// bool isEnd=curNode->isEndOfWord; 
-	// curNode->isEndOfWord = true;
-	// curNode->value=val;
+		if (!curNode->children[index])
+		{
+			curNode->children[index] = new_node();
+			curNode->children[index]->children[52] = curNode;
+			isThere=false;
+		}
+		curNode->children[index]->no_of_ends+=1;
+		curNode = curNode->children[index];
+	}
 
-	// if(isEnd)
-	// {
-	// 	for (int i = length-1; i>=0; i--) 
-	// 	{ 
-	// 		curNode->no_of_ends-=1; 
-	// 		curNode = curNode->children[52];
+	bool isEnd=curNode->isEndOfWord; 
+	curNode->isEndOfWord = true;
+	curNode->value=val;
 
-	// 	} 
-	// }
-	// pthread_mutex_unlock(&m_lock);
-	// return isThere && isEnd;
-    return true;
+	if(isEnd)
+	{
+		for (int i = length-1; i>=0; i--) 
+		{ 
+			curNode->no_of_ends-=1; 
+			curNode = curNode->children[52];
+		} 
+	}
+	pthread_mutex_unlock(&m_lock);
+	return isThere && isEnd;
+    // return true;
 }
 
 //
@@ -311,27 +313,28 @@ char* db_get(db_t *db_data, char *key) {
     // Store the found value of 'key' in char* and return it
     //* query_result;
 
-    //db_t *curNode = db_data;
-	//int length = strlen(key);
+    db_t *curNode = db_data;
+	int length = strlen(key);
 
-	//for (int i = 0; i<length; i++) 
-	//{
-		//int index = get_index(key[i]);
+	for (int i = 0; i<length; i++) 
+	{
+		int index = get_index(key[i]);
+        printf("GET index %d %c \n", index, key[i]);
 
-		//if (!curNode->children[index]) 
-			//return (char*)"";
+		if (!curNode->children[index]) 
+			return (char*)"";
 
-		//curNode = curNode->children[index]; 
-	//}
+		curNode = curNode->children[index]; 
+	}
 
-	//if(curNode->value!=NULL)
-		//return curNode->value;
+	if(curNode->value!=NULL)
+		return curNode->value;
         
-	//return (char*)"";
+	return (char*)"";
 
-    char* query_result = "This is the value of the given key, which is found from db_data";
+    // char* query_result = "This is the value of the given key, which is found from db_data";
 
-    return query_result;
+    // return query_result;
 }
 
 //

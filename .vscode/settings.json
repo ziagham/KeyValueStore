@@ -10,6 +10,7 @@
         "regex": "c",
         "utility": "c",
         "valarray": "c",
-        "dummy-keystore.h": "c"
+        "dummy-keystore.h": "c",
+        "stdio.h": "c"
     }
 }
