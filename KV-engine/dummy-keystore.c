@@ -28,6 +28,7 @@
 #include <poet/poet_config.h>
 
 #define PREFIX "DUMMYKEY"               // Define prefix for configurations
+#include "tas-lock.h"
 #include "dummy-keystore.h"             // Template class for benchmarking
 
 
@@ -37,7 +38,7 @@ heartbeat_t* heart;                     // A parameter 'heart' in heartbeat sett
 poet_state* state;                      // System control states and CPU configurations
 static poet_control_state_t* control_states;
 static poet_cpu_state_t* cpu_states;
-pthread_mutex_t m_lock;
+TASLock tas_lock;
 
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -176,11 +177,6 @@ pthread_t hb_thread_handler;        // A global thread to run heartbeat_timer_th
 time_t time_start, time_end;        // Mark the start-time and end-time of benchmark
 int op_count = 0;                   // Counter of queries
 
-int get_index(char ch)
-{
-	return ch-65 - (6 & -(ch>='a'));
-}
-
 //
 // @brief: Intialize new database - An adapter function
 //
@@ -207,6 +203,8 @@ db_t *db_new() {
     // [Custom-as-yourself] Initialize a database
     //////////////////////////////////////////////////////////
 
+    TAS_Init(&tas_lock);
+
     db_t* database = (db_t*) malloc(sizeof(db_t));
 
     database->isEndOfWord = false; 
@@ -223,12 +221,16 @@ db_t *new_node() {
     db_t* pNode = (db_t*) malloc(sizeof(db_t));
 
     pNode->isEndOfWord = false; 
-	pNode->no_of_ends=0;
+	pNode->no_of_ends = 0;
 
 	for (int i = 0; i < 52; i++) 
 		pNode->children[i] = NULL; 
 
 	return pNode; 
+}
+
+int get_index(char ch) {
+	return ch-65 - (6 & -(ch>='a'));
 }
 
 //
@@ -254,19 +256,16 @@ bool db_put(db_t *db_data, char *key, char *val) {
     // Call function in your data-structure 
     // to insert a ('key','value') into your database 'db_data'
 
-    // printf("op_count %d \n", op_count);
-    
-    pthread_mutex_lock(&m_lock);
+    // Test and set lock mechanism
+    TAS_Lock(&tas_lock);
+
     bool isThere=true;
     db_t *curNode = db_data;
     int length = strlen(key);
 
-    printf("key %s \n", key);
-
 	for (int i = 0; i < length; i++)
 	{
 		int index = get_index(key[i]);
-        printf("PUT index %d %c \n", index, key[i]);
 
 		if (!curNode->children[index])
 		{
@@ -290,7 +289,7 @@ bool db_put(db_t *db_data, char *key, char *val) {
 			curNode = curNode->children[52];
 		} 
 	}
-	pthread_mutex_unlock(&m_lock);
+	TAS_Unlock(&tas_lock);
 	return isThere && isEnd;
     // return true;
 }
@@ -309,9 +308,6 @@ char* db_get(db_t *db_data, char *key) {
 
     // Call function in your data-structure 
     // to get a corresponding value of a 'key' from your database 'db_data'
-    
-    // Store the found value of 'key' in char* and return it
-    //* query_result;
 
     db_t *curNode = db_data;
 	int length = strlen(key);
@@ -319,8 +315,6 @@ char* db_get(db_t *db_data, char *key) {
 	for (int i = 0; i<length; i++) 
 	{
 		int index = get_index(key[i]);
-        printf("GET index %d %c \n", index, key[i]);
-
 		if (!curNode->children[index]) 
 			return (char*)"";
 
@@ -331,10 +325,6 @@ char* db_get(db_t *db_data, char *key) {
 		return curNode->value;
         
 	return (char*)"";
-
-    // char* query_result = "This is the value of the given key, which is found from db_data";
-
-    // return query_result;
 }
 
 //
@@ -378,4 +368,3 @@ int db_free(db_t *db_data) {
     
     return 0;
 }
-
