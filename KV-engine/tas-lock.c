@@ -1,22 +1,50 @@
+#include <stdio.h>
 #include <stdbool.h>
 #include "tas-lock.h"
 
-bool TestAndSet(TASLock *lock, bool newValue) {
-   bool prior = lock->flag;
-   lock->flag = newValue;
+static bool test_and_set(bool *flag) {
+   bool prior = *flag;
+   *flag = true;
    return prior;
 }
 
-void TAS_Init(TASLock *lock) {
-   // 0 indicates that lock is available, 1 that it is held
-   lock->flag = false;
+void tas_init_lock(TAS_lock *lock) {
+   lock->held = false;
+   return;
 }
 
-void TAS_Lock(TASLock *lock) {
-   while (TestAndSet(lock, true) == true)
-   ; // spin-wait (do nothing)
+void tas_acquire_lock(TAS_lock *lock) {
+   // while(true) {
+   //    while(lock->held == true) continue;
+   //    if(!test_and_set(&lock->held)) break;
+   //  }
+
+   // do {
+   //    while (lock->held == true) continue;
+   // } while (test_and_set(&lock->held));
+
+   while (test_and_set(&lock->held));
+   //printf("Lock TAS\n");
+   return;
 }
 
-void TAS_Unlock(TASLock *lock) {
-   lock->flag = false;
+void tas_release_lock(TAS_lock *lock) {
+   //printf("Unlock TAS\n");
+   lock->held = false;
+   return;
 }
+
+// void tas_init_lock(TAS_lock *lock) {
+//    lock->held = false;
+// }
+
+// void tas_acquire_lock(TAS_lock *lock) {
+//    //printf("Lock TAS\n");
+//    while (TestAndSet(&lock->held))
+//    ; // spin-wait (do nothing)
+// }
+
+// void tas_release_lock(TAS_lock *lock) {
+//    //printf("Unlock TAS\n");
+//    lock->held = false;
+// }

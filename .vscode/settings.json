@@ -11,6 +11,9 @@
         "utility": "c",
         "valarray": "c",
         "dummy-keystore.h": "c",
-        "stdio.h": "c"
+        "stdio.h": "c",
+        "stdbool.h": "c",
+        "tas-lock.h": "c",
+        "hb-energy.h": "c"
     }
 }

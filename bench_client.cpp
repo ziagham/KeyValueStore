@@ -480,6 +480,7 @@ void* queries_exec(void *param) {
 
 	pthread_mutex_lock (&printmutex);
 	printf("start benching using thread%" PRIu64 "\n", p->tid);
+	printf("Num_ops %li \n", p->num_ops);
 	pthread_mutex_unlock (&printmutex);
 
 	query* queries = p->queries;
@@ -497,7 +498,7 @@ void* queries_exec(void *param) {
 			char buf[val_len];
 
 			if (type == query_put) {
-				db_put(db_data, key, buf);
+				db_put(db_data, key, buf, p->tid);
 				p->num_puts++;
 			} else if (type == query_get) {
 				char *val = db_get(db_data, key);
@@ -505,7 +506,7 @@ void* queries_exec(void *param) {
 				if (val == NULL) {
 					// cache miss, put something (garbage) in cache
 					p->num_miss++;
-					db_put(db_data, key, buf);
+					db_put(db_data, key, buf, p->tid);
 				} else {
 					//free(val);
 					p->num_hits++;
@@ -537,6 +538,7 @@ void* queries_exec(void *param) {
 
 	printf("queries_exec...done\n");
 	pthread_exit(NULL);
+	// printf("End benching using thread%" PRIu64 "\n", p->tid);
 }
 
 //

@@ -38,8 +38,10 @@ heartbeat_t* heart;                     // A parameter 'heart' in heartbeat sett
 poet_state* state;                      // System control states and CPU configurations
 static poet_control_state_t* control_states;
 static poet_cpu_state_t* cpu_states;
-TASLock tas_lock;
 
+//TAS_lock tas_lock;
+TAS_lock tas_lock = {false};
+//pthread_mutex_t lock_mutex;
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // START POET & HEARTBEAT
@@ -203,7 +205,7 @@ db_t *db_new() {
     // [Custom-as-yourself] Initialize a database
     //////////////////////////////////////////////////////////
 
-    TAS_Init(&tas_lock);
+    //tas_init_lock(&tas_lock);
 
     db_t* database = (db_t*) malloc(sizeof(db_t));
 
@@ -236,18 +238,10 @@ int get_index(char ch) {
 //
 // @brief: Put a (key,value) into database - An adapter function
 //
-bool db_put(db_t *db_data, char *key, char *val) {
+bool db_put(db_t *db_data, char *key, char *val, size_t tid) {
 
     // Update the counter of queries
     op_count++;
-
-    //int length = strlen(key);
-    //printf("key: %s \n", key);
-
-    // for (int i = 0; i < length; i++)
-	// {
-    //     printf("key -> %s \n", key);
-    // }
 
     //////////////////////////////////////////////////////////
     // [Custom-as-yourself] Insert (key,value) into database
@@ -256,8 +250,12 @@ bool db_put(db_t *db_data, char *key, char *val) {
     // Call function in your data-structure 
     // to insert a ('key','value') into your database 'db_data'
 
+    //while (TestAndSet2(&tas_lock) == true);
     // Test and set lock mechanism
-    TAS_Lock(&tas_lock);
+    tas_acquire_lock(&tas_lock);
+    printf("lock by thread%" PRIu64 "\n", tid);
+
+    //pthread_mutex_lock (&lock_mutex);
 
     bool isThere=true;
     db_t *curNode = db_data;
@@ -271,7 +269,7 @@ bool db_put(db_t *db_data, char *key, char *val) {
 		{
 			curNode->children[index] = new_node();
 			curNode->children[index]->children[52] = curNode;
-			isThere=false;
+			isThere = false;
 		}
 		curNode->children[index]->no_of_ends+=1;
 		curNode = curNode->children[index];
@@ -289,7 +287,12 @@ bool db_put(db_t *db_data, char *key, char *val) {
 			curNode = curNode->children[52];
 		} 
 	}
-	TAS_Unlock(&tas_lock);
+    //tas_lock = false;
+	tas_release_lock(&tas_lock);
+    //printf("unlock %s \n", key);
+
+    //pthread_mutex_unlock (&lock_mutex);
+
 	return isThere && isEnd;
     // return true;
 }

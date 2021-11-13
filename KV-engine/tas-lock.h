@@ -1,9 +1,13 @@
 #include <stdbool.h>
 
 typedef struct __lock {
-    bool flag;
-} TASLock;
+    bool held;
+} TAS_lock;
 
-void TAS_Init(TASLock *lock);
-void TAS_Lock(TASLock *lock);
-void TAS_Unlock(TASLock *lock);
+// void tas_init_lock(bool *lock);
+// void tas_acquire_lock(bool *lock);
+// void tas_release_lock(bool *lock);
+
+void tas_init_lock(TAS_lock *lock);
+void tas_acquire_lock(TAS_lock *lock);
+void tas_release_lock(TAS_lock *lock);
