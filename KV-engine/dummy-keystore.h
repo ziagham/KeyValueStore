@@ -11,11 +11,11 @@
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-#include <stdbool.h>
+#include "trie.h"
 
 #ifndef __DUMMY_KEYSTORE_H__
 #define __DUMMY_KEYSTORE_H__
-#define ALPHABET_SIZE (56)
+//#define ALPHABET_SIZE (56)
 
 // You may need to include your custom data structure (e.g., Tree, Map, Hash) at here.
 // For example, I implemented a custom B-tree, 'my-tree.h' in the 'KV-engine/' directory.
@@ -27,14 +27,14 @@
 // For example: If we have a custom data-structure named 'Key_Value_Tree' in 'my-tree.h', then we define as
 //      #define db_t Key_Value_Tree
 
-struct TrieNode
-{ 
-	struct TrieNode *children[ALPHABET_SIZE];
-	bool isEndOfWord;
-	char* value;
-	bool lockHeld;
-	int no_of_ends;
-};
+// struct TrieNode
+// { 
+// 	struct TrieNode *children[ALPHABET_SIZE];
+// 	bool isEndOfWord;
+// 	char* value;
+// 	bool lockHeld;
+// 	int no_of_ends;
+// };
 
 #define db_t struct TrieNode
 

@@ -480,7 +480,6 @@ void* queries_exec(void *param) {
 
 	pthread_mutex_lock (&printmutex);
 	printf("start benching using thread%" PRIu64 "\n", p->tid);
-	printf("Num_ops %li \n", p->num_ops);
 	pthread_mutex_unlock (&printmutex);
 
 	query* queries = p->queries;

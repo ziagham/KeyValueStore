@@ -29,9 +29,8 @@
 #include <poet/poet_config.h>
 
 #define PREFIX "DUMMYKEY"               // Define prefix for configurations
-#include "tas-lock.h"
+//#include "ttas-lock.h"
 #include "dummy-keystore.h"             // Template class for benchmarking
-
 
 int stop_heartbeat = 0;                 // A flag to control heartbeat setting in heartbeat_timer_thread()
 heartbeat_t* heart;                     // A parameter 'heart' in heartbeat settings
@@ -226,40 +225,25 @@ db_t *new_node() {
 	return pNode; 
 }
 
-int get_index(char ch) {
+static int get_index(char ch) {
 	return ch-65 - (6 & -(ch>='a'));
 }
 
-bool test_and_set_cas(bool *flag) {
+static bool test_and_set(bool *flag) {
    bool prior = *flag;
-   *flag = LOCKED;
+   *flag = true;
    return prior;
 }
 
-// bool CAS(int *flag, int newValue) {
-//     bool old = flag;
-//     *flag = newValue;
-//     return old;
-// }
-
-// void get_lock(struct TrieNode *node) {
-//     bool success = CAS(&node->isLock, 1);
-//     if (!success) {
-//         while (node->isLock == 1);
-//     }
-// }
-
-void acquire_lock(struct TrieNode *node) {
-    //printf("lock %d", node->no_of_ends);
+static void acquire_lock(struct TrieNode *node) {
    while(true) {
       while(node->lockHeld == true);
-      if(!test_and_set_cas(&node->lockHeld)) break;
+      if(!test_and_set(&node->lockHeld)) break;
     }
     return;
 }
 
-void release_lock(struct TrieNode *node) {
-   //printf("Unlock TAS\n");
+static void release_lock(struct TrieNode *node) {
    node->lockHeld = false;
    return;
 }
