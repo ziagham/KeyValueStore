@@ -18,7 +18,6 @@
 #include <time.h>
 #include <string.h>
 #include <sys/time.h>
-#include <stdio.h>
 
 #define HB_ENERGY_IMPL                  // Use heartbeat energy impl.
 #define HB_INTERVAL 10000               // HB Interval (in useconds)
@@ -39,6 +38,10 @@ heartbeat_t* heart;                     // A parameter 'heart' in heartbeat sett
 poet_state* state;                      // System control states and CPU configurations
 static poet_control_state_t* control_states;
 static poet_cpu_state_t* cpu_states;
+
+//bool tas_lock;
+TAS_lock tas_lock = TAS_lock_Default;
+//pthread_mutex_t lock_mutex;
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // START POET & HEARTBEAT
@@ -166,6 +169,8 @@ void hb_poet_finish() {
     printf("heartbeat finished\n");
 }
 
+
+
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // A TEMPLATE TO PLUG-IN USER-CUSTOMIZED DATA STRUCTURES
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -203,7 +208,6 @@ db_t *db_new() {
     db_t* database = (db_t*) malloc(sizeof(db_t));
 
     database->isEndOfWord = false; 
-    database->lockHeld = false;
 	database->no_of_ends=0;
 
 	for (int i = 0; i < 52; i++) 
@@ -216,8 +220,7 @@ db_t *new_node() {
     //struct TrieNode* pNode = (struct TrieNode*) malloc(sizeof(struct TrieNode));
     db_t* pNode = (db_t*) malloc(sizeof(db_t));
 
-    pNode->isEndOfWord = false;
-    pNode->lockHeld = false;
+    pNode->isEndOfWord = false; 
 	pNode->no_of_ends = 0;
 
 	for (int i = 0; i < 52; i++) 
@@ -230,38 +233,10 @@ int get_index(char ch) {
 	return ch-65 - (6 & -(ch>='a'));
 }
 
-bool test_and_set_cas(bool *flag) {
+bool test_and_set2(bool *flag) {
    bool prior = *flag;
    *flag = LOCKED;
    return prior;
-}
-
-// bool CAS(int *flag, int newValue) {
-//     bool old = flag;
-//     *flag = newValue;
-//     return old;
-// }
-
-// void get_lock(struct TrieNode *node) {
-//     bool success = CAS(&node->isLock, 1);
-//     if (!success) {
-//         while (node->isLock == 1);
-//     }
-// }
-
-void acquire_lock(struct TrieNode *node) {
-    //printf("lock %d", node->no_of_ends);
-   while(true) {
-      while(node->lockHeld == true);
-      if(!test_and_set_cas(&node->lockHeld)) break;
-    }
-    return;
-}
-
-void release_lock(struct TrieNode *node) {
-   //printf("Unlock TAS\n");
-   node->lockHeld = false;
-   return;
 }
 
 //
@@ -279,6 +254,22 @@ bool db_put(db_t *db_data, char *key, char *val, size_t tid) {
     // Call function in your data-structure 
     // to insert a ('key','value') into your database 'db_data'
 
+    //while (TestAndSet2(&tas_lock) == true);
+    // Test and set lock mechanism
+
+    //tas_acquire_lock(&tas_lock);
+
+    //  while(true) {
+    //   while(tas_lock == LOCKED);
+    //   if(!test_and_set2(&tas_lock)) break;
+    // }
+
+    //while (test_and_set2(&tas_lock) == LOCKED);
+
+    //printf("lock by thread%" PRIu64 "\n", tid);
+
+    //pthread_mutex_lock (&lock_mutex);
+
     bool isThere=true;
     db_t *curNode = db_data;
     int length = strlen(key);
@@ -286,16 +277,12 @@ bool db_put(db_t *db_data, char *key, char *val, size_t tid) {
 	for (int i = 0; i < length; i++)
 	{
 		int index = get_index(key[i]);
-        
+
 		if (!curNode->children[index])
 		{
-            acquire_lock(&*curNode);
-
 			curNode->children[index] = new_node();
 			curNode->children[index]->children[52] = curNode;
 			isThere = false;
-
-            release_lock(&*curNode);
 		}
 		curNode->children[index]->no_of_ends+=1;
 		curNode = curNode->children[index];
@@ -313,6 +300,11 @@ bool db_put(db_t *db_data, char *key, char *val, size_t tid) {
 			curNode = curNode->children[52];
 		} 
 	}
+    //tas_lock = false;
+	//tas_release_lock(&tas_lock);
+    //printf("unlock %s \n", key);
+
+    //pthread_mutex_unlock (&lock_mutex);
 
 	return isThere && isEnd;
     // return true;
