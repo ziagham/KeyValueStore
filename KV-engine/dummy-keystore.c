@@ -367,6 +367,9 @@ int db_free(db_t *db_data) {
 	// Get the total amount of queries
 	printf("Opcount: %d\n",op_count);
 
+	// Get the total amount of queries
+	printf("Energy effiency: %.2f\n",op_count/total_energy);
+
     //////////////////////////////////////////////////////////
     // [Custom-as-yourself] Destroy database and Free memory
     //////////////////////////////////////////////////////////
