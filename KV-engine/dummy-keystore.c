@@ -203,7 +203,6 @@ db_t *db_new() {
 
     database->isEndOfWord = false; 
     database->lockHeld = false;
-	database->no_of_ends=0;
 
 	for (int i = 0; i < 52; i++) 
 		database->children[i] = NULL; 
@@ -217,7 +216,6 @@ db_t *new_node() {
 
     pNode->isEndOfWord = false;
     pNode->lockHeld = false;
-	pNode->no_of_ends = 0;
 
 	for (int i = 0; i < 52; i++) 
 		pNode->children[i] = NULL; 
@@ -251,7 +249,7 @@ static void release_lock(struct TrieNode *node) {
 //
 // @brief: Put a (key,value) into database - An adapter function
 //
-bool db_put(db_t *db_data, char *key, char *val, size_t tid) {
+bool db_put(db_t *db_data, char *key, char *val) {
 
     // Update the counter of queries
     op_count++;
@@ -281,7 +279,6 @@ bool db_put(db_t *db_data, char *key, char *val, size_t tid) {
 
             release_lock(&*curNode);
 		}
-		curNode->children[index]->no_of_ends+=1;
 		curNode = curNode->children[index];
 	}
 
@@ -293,7 +290,6 @@ bool db_put(db_t *db_data, char *key, char *val, size_t tid) {
 	{
 		for (int i = length-1; i>=0; i--) 
 		{ 
-			curNode->no_of_ends-=1; 
 			curNode = curNode->children[52];
 		} 
 	}

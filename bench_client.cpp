@@ -497,7 +497,7 @@ void* queries_exec(void *param) {
 			char buf[val_len];
 
 			if (type == query_put) {
-				db_put(db_data, key, buf, p->tid);
+				db_put(db_data, key, buf);
 				p->num_puts++;
 			} else if (type == query_get) {
 				char *val = db_get(db_data, key);
@@ -505,7 +505,7 @@ void* queries_exec(void *param) {
 				if (val == NULL) {
 					// cache miss, put something (garbage) in cache
 					p->num_miss++;
-					db_put(db_data, key, buf, p->tid);
+					db_put(db_data, key, buf);
 				} else {
 					//free(val);
 					p->num_hits++;

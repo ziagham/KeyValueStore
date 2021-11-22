@@ -46,7 +46,7 @@ db_t *db_new();
 //
 // @brief: Put a (key,value) into database - An adapter function
 //
-bool db_put(db_t *db_data, char *key, char *val, size_t tid);
+bool db_put(db_t *db_data, char *key, char *val);
 
 //
 // @brief: Get a corresponding 'value' of 'key' from database - An adapter function

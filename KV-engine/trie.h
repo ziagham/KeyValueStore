@@ -8,5 +8,4 @@ struct TrieNode
 	bool isEndOfWord;
 	char* value;
 	bool lockHeld;
-	int no_of_ends;
 };
