@@ -172,6 +172,7 @@ void hb_poet_finish() {
 pthread_t hb_thread_handler;        // A global thread to run heartbeat_timer_thread()
 time_t time_start, time_end;        // Mark the start-time and end-time of benchmark
 int op_count = 0;                   // Counter of queries
+double total_energy = 0.0;
 
 //
 // @brief: Intialize new database - An adapter function
@@ -331,6 +332,7 @@ char* db_get(db_t *db_data, char *key) {
 	return (char*)"";
 }
 
+
 //
 // @brief: Destroy database and Free memory - An adapter function
 //
@@ -357,7 +359,7 @@ int db_free(db_t *db_data) {
     printf("Global power is: %.2f\n", global_power);
 
     // Get total energy of entire program execution (in Joule)
-    double total_energy = global_power * elapsed_time;
+    total_energy = global_power * elapsed_time;
 	printf("Total Joule: %.2fJ\n", total_energy );
 
 	// Get the total amount of queries
@@ -366,6 +368,9 @@ int db_free(db_t *db_data) {
 	// Get the total amount of queries
 	printf("Energy effiency: %.2f\n",op_count/total_energy);
 
+    //printf("Result\n");
+
+    //printf("%s\n", get_json_result(1000,4,2));
     //////////////////////////////////////////////////////////
     // [Custom-as-yourself] Destroy database and Free memory
     //////////////////////////////////////////////////////////
@@ -374,4 +379,26 @@ int db_free(db_t *db_data) {
     // to destroy your database and free up memory allocation
     
     return 0;
+}
+
+//
+// @brief: Calculate period of time in the difference of seconds
+//
+char* get_json_result(int queries, int threads, int duration) {
+    char temp[1024];
+    char *result = temp;
+
+    int len = 0;
+
+    len += sprintf(result + len, "#BEGINRECORD\n");
+    len += sprintf(result + len, "queries=%d;", queries);
+    len += sprintf(result + len, "threads=%d;", threads);
+    len += sprintf(result + len, "duartion=%d;", duration);
+    len += sprintf(result + len, "operations=%d;", op_count);
+    len += sprintf(result + len, "energy=%.2f;", total_energy);
+    len += sprintf(result + len, "effiency=%.2f;\n", op_count/total_energy);
+    len += sprintf(result + len, "#ENDRECORD\n");
+    len += sprintf(result + len, "\n");
+
+    return strdup(result);
 }

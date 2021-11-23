@@ -63,6 +63,8 @@ enum {
 
 pthread_mutex_t printmutex;
 FILE *outputjson;
+FILE *output_json_result;
+
 int nround;
 
 static size_t key_len;				// Default parameter for queries settings
@@ -73,6 +75,7 @@ static size_t num_threads = 1;
 static float duration = 10.0;		// Duration of benchmark
 static char* inputfile = NULL;		// Data file of queries
 static char* jsonfile = NULL;		// Json file of output logging
+static char* json_result_file = NULL;		// Json file of output logging
 
 db_t *db_data;						// Definition of key-value engine that is implemented in 'dummy-keystore'
 volatile int stop = 0;				// Sigalarm's flag for timer
@@ -107,6 +110,12 @@ void* queries_exec(void *param);
 //
 void usage(char* binname);
 
+void print_json_reslult(FILE *dest, int queries, int threads, int duration) {
+	char* result = get_json_result(queries, threads, duration);
+	fprintf(dest, "%s", result);
+	fclose(dest);
+}
+
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // @brief: Main stream of execution
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -125,12 +134,13 @@ int main(int argc, char **argv) {
 
 	// Extract user-defined arguments for program execution
 	signed char ch;
-	while ((ch = getopt(argc, argv, "t:d:h:l:j:")) != -1) {
+	while ((ch = getopt(argc, argv, "t:d:h:l:j:r:")) != -1) {
 		switch (ch) {			
-			case 't': num_threads = atoi(optarg); break;	// Parse number of threads
-			case 'd': duration    = atof(optarg); break;	// Parse duration for alarming
-			case 'l': inputfile   = optarg;       break;	// Parse filename of query data file
-			case 'j': jsonfile    = optarg;       break;	// Parse filename of output json for logging
+			case 't': num_threads 		= atoi(optarg); break;	// Parse number of threads
+			case 'd': duration    		= atof(optarg); break;	// Parse duration for alarming
+			case 'l': inputfile   		= optarg;       break;	// Parse filename of query data file
+			case 'j': jsonfile    		= optarg;       break;	// Parse filename of output json for logging
+			case 'r': json_result_file	= optarg;		break;
 			case 'h': usage(argv[0]); exit(0);    break;	// Print argument description for -h
 			default:										// Other cases
 				printf("optarg:%s\n", optarg);
@@ -155,6 +165,14 @@ int main(int argc, char **argv) {
 			exit(1);
 		}
 		fprintf(outputjson, "{\n");
+	}
+
+	if (json_result_file != NULL) {
+		output_json_result = fopen(json_result_file, "a");
+		if (output_json_result == NULL) {
+			perror("can not open json result file");
+			exit(1);
+		}
 	}
 
 	// Load all queries from 'inputfile'
@@ -349,7 +367,8 @@ int main(int argc, char **argv) {
 
 	// Destroy database
 	db_free(db_data);
-
+	
+	
 	// Print out the summary statistics to standard I/O
 	printf("total_time = %.2f\n", result.grand_total_time);
 	printf("total_tput = %.2f\n", (float) (result.total_gets+result.total_puts)/result.grand_total_time);
@@ -364,6 +383,8 @@ int main(int argc, char **argv) {
 	fprintf(outputjson, "}\n");
 	fclose(outputjson);
 
+	print_json_reslult(output_json_result,(int)num_queries, num_threads, duration);
+	
 	// Finalize all threads
 	pthread_attr_destroy(&attr);
 	
@@ -549,6 +570,7 @@ void usage(char* binname) {
 	printf("\t-d #: duration of the test in seconds, by default %f\n", duration);
 	printf("\t-l trace: e.g., /path/to/ycsbtrace, required\n");
     printf("\t-j json file used for logging\n");
+	printf("\t-j file used for results\n");
 	printf("\t-h  : show usage\n");
 }
 
