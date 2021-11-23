@@ -1,60 +1,20 @@
 #RECORD
-threads=1;duartion=10;queries=1000000;operations=6097678;energy=491.90;effiency=12396.17;
+threads=1;duartion=1;queries=1000000;operations=561840;energy=49.98;effiency=11240.45;
 #ENDRECORD
 
 #RECORD
-threads=2;duartion=10;queries=1000000;operations=10751427;energy=490.82;effiency=21904.93;
+threads=1;duartion=1;queries=100000;operations=1175994;energy=49.14;effiency=23930.86;
 #ENDRECORD
 
 #RECORD
-threads=4;duartion=10;queries=1000000;operations=17749555;energy=529.79;effiency=33503.13;
+threads=1;duartion=1;queries=10000;operations=3394114;energy=48.91;effiency=69389.25;
 #ENDRECORD
 
 #RECORD
-threads=1;duartion=10;queries=100000;operations=11184917;energy=487.22;effiency=22956.46;
+threads=1;duartion=1;queries=1000;operations=4158744;energy=65.21;effiency=63776.35;
 #ENDRECORD
 
 #RECORD
-threads=2;duartion=10;queries=100000;operations=18525893;energy=504.38;effiency=36730.26;
-#ENDRECORD
-
-#RECORD
-threads=4;duartion=10;queries=100000;operations=31066574;energy=507.27;effiency=61242.22;
-#ENDRECORD
-
-#RECORD
-threads=1;duartion=10;queries=10000;operations=34728837;energy=488.25;effiency=71129.01;
-#ENDRECORD
-
-#RECORD
-threads=2;duartion=10;queries=10000;operations=50294774;energy=498.61;effiency=100869.06;
-#ENDRECORD
-
-#RECORD
-threads=4;duartion=10;queries=10000;operations=72273947;energy=507.49;effiency=142414.90;
-#ENDRECORD
-
-#RECORD
-threads=1;duartion=10;queries=1000;operations=41764192;energy=487.41;effiency=85685.25;
-#ENDRECORD
-
-#RECORD
-threads=2;duartion=10;queries=1000;operations=57828632;energy=488.97;effiency=118265.82;
-#ENDRECORD
-
-#RECORD
-threads=4;duartion=10;queries=1000;operations=83378824;energy=528.05;effiency=157898.79;
-#ENDRECORD
-
-#RECORD
-threads=1;duartion=10;queries=2000000;operations=6882848;energy=495.78;effiency=13882.81;
-#ENDRECORD
-
-#RECORD
-threads=2;duartion=10;queries=2000000;operations=4626098;energy=492.49;effiency=9393.29;
-#ENDRECORD
-
-#RECORD
-threads=4;duartion=10;queries=2000000;operations=12437694;energy=515.63;effiency=24121.22;
+threads=1;duartion=1;queries=2000000;operations=562780;energy=50.07;effiency=11239.79;
 #ENDRECORD
 
