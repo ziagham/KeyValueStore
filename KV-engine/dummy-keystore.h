@@ -53,7 +53,7 @@ bool db_put(db_t *db_data, char *key, char *val);
 //
 char* db_get(db_t *db_data, char *key);
 
-char* get_json_result(int queries, int threads, int duration);
+char* generate_csv_record(int queries, int threads, int duration);
 
 //
 // @brief: Destroy database and Free memory - An adapter function

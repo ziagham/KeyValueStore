@@ -384,20 +384,18 @@ int db_free(db_t *db_data) {
 //
 // @brief: Calculate period of time in the difference of seconds
 //
-char* get_json_result(int queries, int threads, int duration) {
+char* generate_csv_record(int queries, int threads, int duration) {
     char temp[1024];
     char *result = temp;
 
     int len = 0;
 
-    len += sprintf(result + len, "#BEGINRECORD\n");
-    len += sprintf(result + len, "queries=%d;", queries);
-    len += sprintf(result + len, "threads=%d;", threads);
-    len += sprintf(result + len, "duartion=%d;", duration);
-    len += sprintf(result + len, "operations=%d;", op_count);
-    len += sprintf(result + len, "energy=%.2f;", total_energy);
-    len += sprintf(result + len, "effiency=%.2f;\n", op_count/total_energy);
-    len += sprintf(result + len, "#ENDRECORD\n");
+    len += sprintf(result + len, "%d, ", threads);
+    len += sprintf(result + len, "%d, ", duration);
+    len += sprintf(result + len, "%d, ", queries);
+    len += sprintf(result + len, "%d, ", op_count);
+    len += sprintf(result + len, "%.2f, ", total_energy);
+    len += sprintf(result + len, "%.2f", op_count/total_energy);
     len += sprintf(result + len, "\n");
 
     return strdup(result);

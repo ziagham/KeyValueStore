@@ -63,7 +63,7 @@ enum {
 
 pthread_mutex_t printmutex;
 FILE *outputjson;
-FILE *output_json_result;
+FILE *output_csv_result;
 
 int nround;
 
@@ -75,7 +75,7 @@ static size_t num_threads = 1;
 static float duration = 10.0;		// Duration of benchmark
 static char* inputfile = NULL;		// Data file of queries
 static char* jsonfile = NULL;		// Json file of output logging
-static char* json_result_file = NULL;		// Json file of output logging
+static char* csv_result_file = NULL;		// Json file of output logging
 
 db_t *db_data;						// Definition of key-value engine that is implemented in 'dummy-keystore'
 volatile int stop = 0;				// Sigalarm's flag for timer
@@ -110,8 +110,8 @@ void* queries_exec(void *param);
 //
 void usage(char* binname);
 
-void print_json_reslult(FILE *dest, int queries, int threads, int duration) {
-	char* result = get_json_result(queries, threads, duration);
+void print_csv_reslult(FILE *dest, int queries, int threads, int duration) {
+	char* result = generate_csv_record(queries, threads, duration);
 	fprintf(dest, "%s", result);
 	fclose(dest);
 }
@@ -140,7 +140,7 @@ int main(int argc, char **argv) {
 			case 'd': duration    		= atof(optarg); break;	// Parse duration for alarming
 			case 'l': inputfile   		= optarg;       break;	// Parse filename of query data file
 			case 'j': jsonfile    		= optarg;       break;	// Parse filename of output json for logging
-			case 'r': json_result_file	= optarg;		break;
+			case 'r': csv_result_file	= optarg;		break;
 			case 'h': usage(argv[0]); exit(0);    break;	// Print argument description for -h
 			default:										// Other cases
 				printf("optarg:%s\n", optarg);
@@ -167,9 +167,9 @@ int main(int argc, char **argv) {
 		fprintf(outputjson, "{\n");
 	}
 
-	if (json_result_file != NULL) {
-		output_json_result = fopen(json_result_file, "a");
-		if (output_json_result == NULL) {
+	if (csv_result_file != NULL) {
+		output_csv_result = fopen(csv_result_file, "a");
+		if (output_csv_result == NULL) {
 			perror("can not open json result file");
 			exit(1);
 		}
@@ -383,7 +383,7 @@ int main(int argc, char **argv) {
 	fprintf(outputjson, "}\n");
 	fclose(outputjson);
 
-	print_json_reslult(output_json_result,(int)num_queries, num_threads, duration);
+	print_csv_reslult(output_csv_result,(int)num_queries, num_threads, duration);
 	
 	// Finalize all threads
 	pthread_attr_destroy(&attr);

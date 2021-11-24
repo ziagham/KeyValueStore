@@ -1,7 +1,5 @@
 #!/usr/bin/bash
 
-# Copyright 2021 Amin Ziagham
-
 workloadPath=../datasets/
 extension="*.dat"
 
@@ -28,10 +26,3 @@ do
         done
     done
 done
-
-# for thread in 1 2 4 8 16 32
-# do
-#     sudo HEARTBEAT_ENABLED_DIR=. ./bench_client -t $thread -d $1 -l $2 -j logging/result.json -r evaluation/result.txt
-# done
-
-#../datasets/workloads/a/1000.dat
