@@ -45,7 +45,9 @@ Once the benchmark is done and the results are generated, those results can be p
 To run this plotting program, you need to have the Python programming language installed on your system. In addition, three python libraries must be installed. These libraries include **pandas**, **matplotlib**, and **numpy**. You can use the following commands to install them:
 
 ```pip3 install numpy```
+
 ```pip3 install matplotlib```
+
 ```pip3 install pandas```
 
 ## Run
