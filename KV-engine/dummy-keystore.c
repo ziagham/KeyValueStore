@@ -211,8 +211,10 @@ db_t *db_new() {
     return database;
 }
 
+//
+// @brief: Function to create a new node to add to the trie data structure
+//
 db_t *new_node() {
-    //struct TrieNode* pNode = (struct TrieNode*) malloc(sizeof(struct TrieNode));
     db_t* pNode = (db_t*) malloc(sizeof(db_t));
 
     pNode->isEndOfWord = false;
@@ -224,6 +226,9 @@ db_t *new_node() {
 	return pNode; 
 }
 
+//
+// @brief: Function to convert a character to an index in ASCII code
+//
 static int get_index(char ch) {
 	return ch-65 - (6 & -(ch>='a'));
 }
@@ -234,6 +239,9 @@ static bool test_and_set(bool *flag) {
    return prior;
 }
 
+//
+// @brief: Function for acquire lock inorder to enter the critical area
+//
 static void acquire_lock(struct TrieNode *node) {
    while(true) {
       while(node->lockHeld == true);
@@ -242,6 +250,9 @@ static void acquire_lock(struct TrieNode *node) {
     return;
 }
 
+//
+// @brief: Release the lock corresponding to a node
+//
 static void release_lock(struct TrieNode *node) {
    node->lockHeld = false;
    return;
@@ -368,9 +379,6 @@ int db_free(db_t *db_data) {
 	// Get the total amount of queries
 	printf("Energy effiency: %.2f\n",op_count/total_energy);
 
-    //printf("Result\n");
-
-    //printf("%s\n", get_json_result(1000,4,2));
     //////////////////////////////////////////////////////////
     // [Custom-as-yourself] Destroy database and Free memory
     //////////////////////////////////////////////////////////
@@ -382,7 +390,7 @@ int db_free(db_t *db_data) {
 }
 
 //
-// @brief: Calculate period of time in the difference of seconds
+// @brief: A function that is used to get the information of system runtime and return them in a CSV row format
 //
 char* generate_csv_record(int queries, int threads, int duration) {
     char temp[1024];

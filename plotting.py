@@ -10,7 +10,6 @@ import time
 #=================================================================
 def build_arg_parser():
     RESULT_DEFAULT_PATH = "evaluation"
-    PLOTTING_TYPE_DEFAULT = "threads"
     EXPORT_PDF_DEFAULT = False
 
     parser = argparse.ArgumentParser()
@@ -20,23 +19,18 @@ def build_arg_parser():
         resultkwargs = { "default": RESULT_DEFAULT_PATH,
                 "help": porthelp + " Default: {}".format(RESULT_DEFAULT_PATH) }
     else:
-        resultkwargs = { "required": True,
-                "help": porthelp + " Required." }
+        resultkwargs = { "required": True, "help": porthelp + " Required." }
     parser.add_argument("-r", "--result", type=str, **resultkwargs)
     
     parser.add_argument("--pdf", action='store_true', help="Export plotting as PDF. Default: {}".format(EXPORT_PDF_DEFAULT))
     
-    parser.add_argument("-t", "--type", nargs='?', default=PLOTTING_TYPE_DEFAULT,
-            help="Draw chart based on the desired type (e.g., by threads or duration).  Default: {}".format(PLOTTING_TYPE_DEFAULT))
-
     return parser
 
 # Plotting object to draw charts
 #=================================================================
 class PlotData:
-    def __init__(self, result_data, draw_type, export_pdf):
+    def __init__(self, result_data, export_pdf):
         self.result_data = result_data
-        self.draw_type = draw_type
         self.export_pdf = export_pdf
     
     def __generate_name(self, type):
@@ -76,7 +70,7 @@ class PlotData:
 
         sortedData = df.sort_values(by=['Queries'])
         myData = sortedData["Queries"].unique()
-
+        
         for i in range (len(myData)):
             filter = df["Queries"]==myData[i]
             newData = df.where(filter, inplace = False)
@@ -107,13 +101,7 @@ class PlotData:
             plt.show()
        
     def plot(self):
-        if (self.draw_type == "threads"):
-            self.__draw("Threads")
-        elif (self.draw_type == "duration"):
-            self.__draw("Duration")
-        else:
-            print("Please provide a corrct plotting type. It should between 'threads' and 'duration'.")
-        
+        self.__draw("Threads")
         
 # Main function (Entry Point)
 #=================================================================

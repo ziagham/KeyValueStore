@@ -53,6 +53,9 @@ bool db_put(db_t *db_data, char *key, char *val);
 //
 char* db_get(db_t *db_data, char *key);
 
+//
+// @brief: A function that is used to get the information of system runtime and return them in a CSV row format
+//
 char* generate_csv_record(int queries, int threads, int duration);
 
 //
