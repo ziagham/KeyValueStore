@@ -15,7 +15,7 @@ fi
 path="ls $workloadPath$extension | sort -n"
 
 evaluationPath="evaluation"
-resultPath=${evaluationPath}/result.txt
+resultPath=${evaluationPath}/result.csv
 
 if [ ! -d "$evaluationPath" ]
 then
