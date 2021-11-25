@@ -59,4 +59,6 @@ In the above command,**-r** refere to the result path, **-t** indicated the plot
 
 For example, to plot the benchmark's results which located in the **result/data.csv** path, the following command must be executed:
 
-```python3 plotting.py -r result/data.csv -t threads --pdf```
+    python3 plotting.py -r result/data.csv -t threads --pdf
+
+
