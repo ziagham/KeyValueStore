@@ -4,6 +4,7 @@ This in-memory KVS uses the Trie-tree as the main in-memory data structure for a
 # Benchmark program
 First of all, it should be noted that the relevant datasets are placed in a folder called the **datasets**. The datasets are privided are categories in three type A, B, and C. Which indicates of YCSB types. A for 50:50, B for 95:05, and C for 100:0 percent of read/update ratio.
 
+> The all scripts have been developed for the Linux environment and can only be run in this environment.
 
 ## Run a benchmark for one mode only
 In this case, only one mode can be executed and benchmarked. One mode means that, for example, a doing benchmark for only 4 threads, or for a duration of 10 seconds, or for a dataset. For this purpose

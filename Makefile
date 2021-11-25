@@ -10,7 +10,5 @@ $(EXE): bench_client.cpp
 	$(CC) $(CFLAGS) -o $@ $^ $(DEPS) $(LIB)
 
 .PHONY: clean
-
 clean:
 	-rm $(EXE)
-
