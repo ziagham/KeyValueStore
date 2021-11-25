@@ -38,6 +38,8 @@ In the above command, the word **threads_mode** refers to the state in which the
 
 In the above command, the word **duration_mode** refers to the state in which the benchmark should be executed (meaning for different durations) and 8 indicates the number of threads that can be used.
 
+> You should note that the results obtained from these two modes are different from each other. This point was made for the purpose that in the plotting section, the results are drawn according to these modes.
+
 # Plotting the result
 Once the benchmark is done and the results are generated, those results can be plotted. To do this, the **plotting.py** has been prepared which is responsible for reading the generated data and plotting them.
 
@@ -57,8 +59,14 @@ To run this program and plot a chart, enter the following command in the termina
 
 In the above command,**-r** refere to the result path, **-t** indicated the plotting mode (wcich could be only "threads" or "duration" words.), **--pdf** is used for the case where we do not want the display the chart want to saved directly as a pdf file.
 
-For example, to plot the benchmark's results which located in the **result/data.csv** path, the following command must be executed:
+> As mentioned earlier, we have two types of results for two different modes of execution. Different arguments must be used to draw those results.
 
-    python3 plotting.py -r result/data.csv -t threads --pdf
+For example, to plot the benchmark's results, which located in the **result/result1.csv** path, the following command must be executed:
 
+    python3 plotting.py -r result/result1.csv -t threads --pdf
 
+The **threads** argument in the above command indicates that a chart is drawn for a mode that result obtained from benhcmarking for multiple threads.
+
+There is another mode of plotting, which is related to the mode in which the benchmark has been executed for different durations. To draw the results of this case, we use the following command:
+
+    python3 plotting.py -r result/result2.csv -t duration --pdf
