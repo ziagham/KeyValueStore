@@ -44,14 +44,14 @@ In the above command, the word **duration_mode** refers to the state in which th
 # Plotting the result
 Once the benchmark is done and the results are generated, those results can be plotted. To do this, the **plotting.py** has been prepared which is responsible for reading the generated data and plotting them.
 
-## Prerequisites
+### Prerequisites
 To run this plotting program, you need to have the Python programming language installed on your system. In addition, three python libraries must be installed. These libraries include **pandas**, **matplotlib**, and **numpy**. You can use the following commands to install them:
 
     pip3 install numpy
     pip3 install matplotlib
     pip3 install pandas
 
-## Run
+### Run
 To run this program and plot a chart, enter the following command in the terminal:
 
     python3 plotting.py -r <the result csv file> -t <type of plotting: "threads" or "duration"> [--pdf]
