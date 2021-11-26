@@ -1,10 +1,12 @@
 # Multi-threading In-memory Key-Value Store (KVS)
 This in-memory KVS uses the Trie-tree as the main in-memory data structure for achieving high insert and lookup performance. For concurrency, this KVS uses Spin-lock mechanism to avoid race conditions and guarantee mutual exclusion. Also for benchmarking and evaluating the KVS system, two libraries have been used. For energy-efficiency evaluation, POET toolkit have been integrated to the proposed KVS and Yahoo! Cloud Serving Benchmark (YCSB) have been used for benchmarking.
 
+> The all scripts have been developed for the Linux environment and can only be run in this environment.
+
 # Benchmark program
 First of all, it should be noted that the relevant datasets are placed in a folder called the **datasets**. The provided datasets are categories in two types A, B. Which indicates of YCSB types. A for 50:50, and B for 95:05 percent of read/update ratio.
 
-> The all scripts have been developed for the Linux environment and can only be run in this environment.
+> Please note that datasets are generated according to the proposed system structure. So to generate a new dataset, please refer to the YCSB folder and read README file to generate a new dataset for the proposed system.
 
 ## Run a benchmark for one mode only
 In this case, only one mode can be executed and benchmarked. One mode means that, for example, a doing benchmark for only 4 threads, or for a duration of 10 seconds, or for a dataset. For this purpose
