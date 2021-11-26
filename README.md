@@ -56,16 +56,18 @@ To run this program and plot a chart, enter the following command in the termina
 
     python3 plotting.py -r <the result csv file> -t <type of plotting: "threads" or "duration"> [--pdf]
 
-In the above command,**-r** refere to the result path, **-t** indicated the plotting mode (wcich could be only "threads" or "duration" words.), **--pdf** is used for the case where we do not want the display the chart want to saved directly as a pdf file.
+In the above command,**-r** refere to the result path (generated in the previous section), **-t** indicated the plotting mode (wcich could be only "threads" or "duration" words.), **--pdf** is used for the case where we do not want the display the chart want to saved directly as a pdf file.
 
-> As mentioned earlier, we have two types of results for two different modes of execution. Different arguments must be used to draw those results.
+> As mentioned earlier, we have two types of results for two different modes of execution.
 
-For example, to plot the benchmark's results, which located in the **result/result1.csv** path, the following command must be executed:
+For example, to plot the benchmark's results, which located in the **evaluation/result-threads.csv** path, the following command must be executed:
 
-    python3 plotting.py -r result/result1.csv -t threads --pdf
+    python3 plotting.py -r evaluation/result-threads.csv -t threads --pdf
 
 The **threads** argument in the above command indicates that a chart is drawn for a mode that result obtained from benhcmarking for multiple threads.
 
-There is another mode of plotting, which is related to the mode in which the benchmark has been executed for different durations. To draw the results of this case, we use the following command:
+There is another mode of plotting, which is related to the mode in which the benchmark has been executed for different duration. To draw the results of this case, we use the following command:
 
-    python3 plotting.py -r result/result2.csv -t duration --pdf
+    python3 plotting.py -r evaluation/result-duration.csv -t duration --pdf
+
+Assuming the results are stored in the `evaluation/result-duration.csv` path.
