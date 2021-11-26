@@ -19,12 +19,18 @@ fi
 
 path="ls $workloadPath$extension | sort -n"
 
+loggingPath="logging"
 evaluationPath="evaluation"
+jsonLoggingPath=${loggingPath}/result.json
 resultPath=${evaluationPath}/result-duration.csv
 
 if [ $mode == "threads_mode" ]; then
     echo "Hello"
     resultPath=${evaluationPath}/result-threads.csv
+fi
+
+if [ ! -d "$loggingPath" ]; then
+    mkdir ./$loggingPath
 fi
 
 if [ ! -d "$evaluationPath" ]; then
@@ -37,13 +43,13 @@ do
         duration=$input
         for thread in 1 2 4 8 16 32
         do
-            sudo HEARTBEAT_ENABLED_DIR=. ./bench_client -t $thread -d $duration -l $workload -j logging/result.json -r $resultPath
+            sudo HEARTBEAT_ENABLED_DIR=. ./bench_client -t $thread -d $duration -l $workload -j $jsonLoggingPath -r $resultPath
         done
     elif [ $mode == "duration_mode" ]; then
         thread=$input
         for (( duration=10; duration<=40; duration+=10 ));
         do
-            sudo HEARTBEAT_ENABLED_DIR=. ./bench_client -t $thread -d $duration -l $workload -j logging/result.json -r $resultPath
+            sudo HEARTBEAT_ENABLED_DIR=. ./bench_client -t $thread -d $duration -l $workload -j $jsonLoggingPath -r $resultPath
         done
     fi
 done
