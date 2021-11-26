@@ -2,7 +2,7 @@
 This in-memory KVS uses the Trie-tree as the main in-memory data structure for achieving high insert and lookup performance. For concurrency, this KVS uses Spin-lock mechanism to avoid race conditions and guarantee mutual exclusion. Also for benchmarking and evaluating the KVS system, two libraries have been used. For energy-efficiency evaluation, POET toolkit have been integrated to the proposed KVS and Yahoo! Cloud Serving Benchmark (YCSB) have been used for benchmarking.
 
 # Benchmark program
-First of all, it should be noted that the relevant datasets are placed in a folder called the **datasets**. The datasets are privided are categories in three type A, B, and C. Which indicates of YCSB types. A for 50:50, B for 95:05, and C for 100:0 percent of read/update ratio.
+First of all, it should be noted that the relevant datasets are placed in a folder called the **datasets**. The provided datasets are categories in two types A, B. Which indicates of YCSB types. A for 50:50, and B for 95:05 percent of read/update ratio.
 
 > The all scripts have been developed for the Linux environment and can only be run in this environment.
 
