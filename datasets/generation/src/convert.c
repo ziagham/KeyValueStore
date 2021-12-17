@@ -94,20 +94,10 @@ int main(int argc, char **argv) {
             queries[i].type = (char) query_get;
             // The key is the third word in the line.
             sscanf(line, "%*s %*s %s", key);
-			//printf("Key1: %s \n", removeSpecialCharacter(key));
-			
-            //hashed_key = CityHash64(key, 30);
-			
-			//uint64_t num = strtoull(key, NULL, 0);
-			//printf("READ Key: %s \n", removeSpecialCharacter(b62_encode(num)));
-			
-			//printf("READ Key: %s \n", substr(key, 4, strlen(key)));
-			
+
 			hashed_key = generateAlphabetKey(key);
 			char hashed_key_array[strlen(hashed_key)];
-			
-			//printf("READ Key: %s \n", hashed_key);
-			
+
 			strcpy(hashed_key_array, hashed_key);
             memset(queries[i].hashed_key, 0, NKEY);
             memcpy(queries[i].hashed_key, hashed_key_array, sizeof(hashed_key_array));
@@ -117,14 +107,9 @@ int main(int argc, char **argv) {
             queries[i].type = (char) query_put;
             // The key is the third word in the line.
             sscanf(line, "%*s %*s %s", key);
-			//printf("Key2: %s \n", removeSpecialCharacter(key));
-            
-			//hashed_key = CityHash64(key, 30);
-			
+
 			hashed_key = generateAlphabetKey(key);
 			char hashed_key_array[strlen(hashed_key)];
-			
-			//printf("UPDATE Key: %s \n", hashed_key);
 			
 			strcpy(hashed_key_array, hashed_key);
             memset(queries[i].hashed_key, 0, NKEY);

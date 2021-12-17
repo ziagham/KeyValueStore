@@ -1,0 +1,15 @@
+# We don't really care about the fields for our benchmarks.
+fieldcount=1
+fieldlength=16
+# Number of unique keys.
+recordcount=1000
+# Number of queries to generate.
+operationcount=1000
+
+readproportion=0.5
+updateproportion=0.5
+scanproportion=0
+insertproportion=0
+
+# Which distribution to use.
+requestdistribution=zipfian
